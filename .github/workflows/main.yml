@@ -1,34 +1,27 @@
-name: Build Kernel
+name: CI
+
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-kernel:
+    name: Build Kernel
+    runs-on: ubuntu-22.04
     steps:
       - name: Build
         uses: dabao1955/kernel_build_action@main
         with:
-          # 1. 內核源碼資訊
+          # 1. 核心源碼資訊
           kernel-url: https://github.com/MiCode/Xiaomi_Kernel_OpenSource
           kernel-branch: bsp-klimt-v-oss
-          # 小米 6.6 內核配置檔案標準路徑 (必須包含 vendor/)
+          # 關鍵：小米 6.6 核心配置檔案在 vendor 子目錄下
           config: vendor/klimt_defconfig
           arch: arm64
-
-          # 2. 工具鏈設定 (完全參照範本參數)
-          android-version: 14
+          
+          # 2. 工具鏈設定 (參考你的範本結構)
           aosp-gcc: true
           aosp-clang: true
-          # 指定一個穩定的 Clang 版本，避免之前截圖中的 400 Bad Request 錯誤
+          # 小米 15T Pro 是 Android 15 設備，核心 6.6，必須用較新的版本
+          android-version: 14
+          # 使用一個在 6.6 核心上驗證過最穩定的 Clang 版本，避免 400 錯誤
           aosp-clang-version: r510928
-
-          # 3. KernelSU + SusFS 整合
-          # 使用範本支援的 ksu-other 模式來獲取 SusFS
-          ksu: true
-          ksu-other: true
-          ksu-url: https://github.com/rifsxd/KernelSU-Next
-          ksu-version: next-susfs
-
-          # 4. 輸出設定
-          anykernel3: true
